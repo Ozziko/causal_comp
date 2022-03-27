@@ -1114,6 +1114,7 @@ def run_experiment(args: Args):
     macro_result_summary_dict['all'] = macro_results_df[acc_result_cols].fillna(0).mean(0)
     macro_result_summary_df = pd.DataFrame.from_dict(macro_result_summary_dict, orient='index')
     macro_result_summary_df.columns = macro_result_summary_df.columns.str.replace('acc', '')
+    macro_result_summary_df.index.name = 'metric'
 
     acc_seen = macro_result_summary_df.loc['seen']
     acc_unseen = macro_result_summary_df.loc['unseen']
@@ -1154,6 +1155,7 @@ def run_experiment(args: Args):
         micro_result_summary_df.loc['unseen', col] /= micro_results_df.query("state == 'unseen'")[f'{phase} samples'].sum()
         micro_result_summary_df.loc['all', col] /= micro_results_df[f'{phase} samples'].sum()
     micro_result_summary_df.columns = micro_result_summary_df.columns.str.replace("true pos", '')
+    micro_result_summary_df.index.name = 'metric'
 
     acc_seen = micro_result_summary_df.loc['seen']
     acc_unseen = micro_result_summary_df.loc['unseen']
@@ -1184,10 +1186,10 @@ if not os.path.isdir(exp_dir):
 args = Args()
 json.dump(vars(args), open(pjoin(exp_dir, 'args.json'), 'w'))
 
-for num_split in tqdm([5000], desc='split'):
+for num_split in tqdm([5000, 5001, 5002], desc='split'):
     args.num_split = num_split
     
-    for init_seed in tqdm([0], desc='seed', leave=False):
+    for init_seed in tqdm([0, 1, 2], desc='seed', leave=False):
         args.init_seed = init_seed
         exp_name = f"VT={num_split} init_seed={init_seed}.xlsx"
         exp_path = pjoin(exp_dir, exp_name)
