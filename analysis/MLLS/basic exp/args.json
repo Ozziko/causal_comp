@@ -1,0 +1,1 @@
+{"outputs_dir": "analysis", "dataset_name": "ao_clevr", "data_dir": "", "dataset_variant": "VT", "seen_seed": 0, "num_split": 5000, "init_seed": 0, "skorch_val_ratio": 0.2, "batch_size": 1024, "train_size": 80000, "train_unseen_ovr_seen": 0, "test_size": 8000, "VP_mode": "CE", "VP_calibrate": true, "VP_held_out_from": "val", "VP_held_out_ratio": 0.2}
