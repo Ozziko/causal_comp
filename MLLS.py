@@ -15,15 +15,7 @@ from os.path import join as pjoin
 from tqdm.auto import tqdm
 from copy import deepcopy
 
-import shutil
 from time import sleep
-
-from sklearn.model_selection import ParameterGrid
-from sklearn.metrics import classification_report
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.linear_model import LogisticRegression
-from sklearn.calibration import calibration_curve
 
 import torch
 import torch.nn as nn
@@ -34,7 +26,7 @@ import logging
 logging.basicConfig(format='%(asctime)s (%(levelname)s): %(message)s',
                     # datefmt='%Y-%m-%d %H:%M:%S',
                     )
-logger_name = 'DLS'
+logger_name = 'MLLS'
 logger = logging.getLogger(logger_name)
 logger.setLevel(logging.INFO)
 
@@ -279,7 +271,7 @@ def load_data(args: ProjectArgs):
 
         X, Y_comb = {}, {}
         Y_shape, Y_color = {}, {}
-        Y_shape_onehot, Y_color_onehot = {}, {}
+        # Y_shape_onehot, Y_color_onehot = {}, {}
         for phase in ['train', 'test']:
             data_df = meta_df_.query(f"phase == '{phase}'")
             print(f"{phase} contains {len(data_df)} samples")
@@ -287,14 +279,14 @@ def load_data(args: ProjectArgs):
             Y_comb[phase] = data_df['comb idx'].values.astype('int64')
 
             Y_shape[phase] = data_df['shape idx'].values.astype('int64')
-            one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['shape'])])
-            Y_shape_onehot[phase] = one_hot_encoder.fit_transform(data_df['shape idx'].values.reshape(-1, 1)).astype(
-                'float32')  # float32 required in skorch for multi-label learning
+            # one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['shape'])])
+            # Y_shape_onehot[phase] = one_hot_encoder.fit_transform(data_df['shape idx'].values.reshape(-1, 1)).astype(
+            #     'float32')  # float32 required in skorch for multi-label learning
 
             Y_color[phase] = data_df['color idx'].values.astype('int64')
-            one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['color'])])
-            Y_color_onehot[phase] = one_hot_encoder.fit_transform(data_df['color idx'].values.reshape(-1, 1)).astype(
-                'float32')  # float32 required in skorch for multi-label learning
+            # one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['color'])])
+            # Y_color_onehot[phase] = one_hot_encoder.fit_transform(data_df['color idx'].values.reshape(-1, 1)).astype(
+            #     'float32')  # float32 required in skorch for multi-label learning
 
             X[phase] = torch.cat([features_dict_[filename].unsqueeze(0)
                                   for filename in data_df['image_filename']], dim=0)
@@ -372,14 +364,14 @@ def load_data(args: ProjectArgs):
             Y_comb[phase] = data_df['comb idx'].values.astype('int64')
 
             Y_shape[phase] = data_df['shape idx'].values.astype('int64')
-            one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['shape'])])
-            Y_shape_onehot[phase] = one_hot_encoder.fit_transform(data_df['shape idx'].values.reshape(-1, 1)).astype(
-                'float32')  # float32 required in skorch for multi-label learning
+            # one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['shape'])])
+            # Y_shape_onehot[phase] = one_hot_encoder.fit_transform(data_df['shape idx'].values.reshape(-1, 1)).astype(
+            #     'float32')  # float32 required in skorch for multi-label learning
 
             Y_color[phase] = data_df['color idx'].values.astype('int64')
-            one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['color'])])
-            Y_color_onehot[phase] = one_hot_encoder.fit_transform(data_df['color idx'].values.reshape(-1, 1)).astype(
-                'float32')  # float32 required in skorch for multi-label learning
+            # one_hot_encoder = OneHotEncoder(sparse=False, categories=[range(label_n_vals['color'])])
+            # Y_color_onehot[phase] = one_hot_encoder.fit_transform(data_df['color idx'].values.reshape(-1, 1)).astype(
+            #     'float32')  # float32 required in skorch for multi-label learning
 
             features = dataset.activations
             X[phase] = torch.cat([features[filename].unsqueeze(0)
@@ -643,7 +635,7 @@ def run_epoch(training: bool, models: dict, dataloader, clss_loss, args: Project
         else:
             results['unseen acc'] = np.nan
             results['harmonic acc'] = np.nan
-        results.update({f'{space} loss / sample': loss / n_samples for space, loss in epoch_losses.items()})
+        results.update({f'{space} loss per sample': loss / n_samples for space, loss in epoch_losses.items()})
     return results, epoch_log_probs
 
 

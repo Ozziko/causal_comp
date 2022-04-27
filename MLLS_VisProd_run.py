@@ -102,11 +102,11 @@ if __name__ == '__main__':
                                                  clss_loss=clss_loss, args=args, seen_combs=seen_combs)
             if args.wandb.use:
                 results4wandb = results[phase][epoch]
-                results4wandb = {key + f' <{phase}>': val for key, val in results4wandb.items()}
+                results4wandb = {f'{key}/{phase}': val for key, val in results4wandb.items()}
                 results4wandb.update({'epoch': epoch, 'phase': phase})
                 if phase == 'train' and epoch > 0:
                     for space, optimizer in optimizers.items():
-                        results4wandb[f'{space} lr <{phase}>'] = optimizer.param_groups[0]['lr']
+                        results4wandb[f'{space} lr/{phase}'] = optimizer.param_groups[0]['lr']
                 wandb.log(results4wandb)
 
             # early stopping
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     summary_dict = {}
     for metric, row in micro_result_summary_df.iterrows():
         for phase, val in row.items():
-            summary_dict[f"{metric} <{phase}>"] = val
+            summary_dict[f"{metric}/{phase}"] = val
     results['summary'].update(summary_dict)
     if args.wandb.use:
         wandb.run.summary.update(results['summary'])
@@ -213,4 +213,4 @@ if __name__ == '__main__':
 
     run_time = time() - start_time
     logger.info("total run time: %.2e sec = %dm:%.1fs" % (run_time, run_time // 60, run_time % 60))
-    logger.info(f"completed :-)")
+    logger.info(f"completed successfully :-)")
