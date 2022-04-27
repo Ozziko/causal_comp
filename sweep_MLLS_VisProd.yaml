@@ -19,8 +19,8 @@ parameters:
 #    value: ""
 
   args.training.batch_size:
-#    value: 256
-    values: [256, 1024]
+    value: 256
+#    values: [256, 1024]
 
   args.VP.decoupling_loss:
     value: 'HSIC,G'
@@ -29,7 +29,7 @@ parameters:
 #    value: 3e5
     values: [1e4, 1e5, 1e6]
   args.VP.epochs:
-    value: 100
+    value: 3
   args.VP.EM_iters:
     value: 30
 
@@ -46,7 +46,7 @@ parameters:
     value: 'max'
   args.VP.early_stop_on:
     value: 'harmonic acc'
-  args.training.early_stop_patience:
+  args.VP.early_stop_patience:
     value: 10
   args.VP.early_stop_threshold:
     value: 1e-3
@@ -63,7 +63,7 @@ parameters:
 
 
   args.training.workers:
-    value: 4
+    value: 0
 
   args.wandb.use:
     value: True
@@ -71,4 +71,4 @@ parameters:
     value: True
 
   args.cfg.last_git_commit:
-    value: 4d1bc78a2059ca55158ab87d5ab3bb7e66b206ea
+    value: a1bf06db7a872d77cf68579ed334487b92f790cf
