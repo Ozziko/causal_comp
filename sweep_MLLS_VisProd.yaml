@@ -1,0 +1,77 @@
+program: MLLS_VisProd.py
+project: MLLS VisProd
+name: 2080 VisProd HSIC debug
+method: grid
+parameters:
+  args.wandb.sweep_name:
+    value: 2080 VisProd HSIC debug
+  args.wandb.run_naming_args:
+    value: 'VP.decoupling_loss, VP.lambda_decoupling, VP.lr, data.seed, cfg.seed, training.batch_size'
+#  args.cfg.seed:
+#    values: [0,1,2]
+  args.cfg.seed:
+    value: -1
+  args.data.num_split:
+#    values: [5000, 5001, 5002]
+    value: 5000
+
+#  args.data.dir:
+#    value: ""
+
+  args.training.epochs:
+    value: 100
+  args.training.batch_size:
+    value: 256
+#    values: [256, 1024]
+
+
+  args.VP.decoupling_loss:
+    value: 'HSIC,G'
+#    values: ['HSIC,L', 'HSIC,G']
+  args.VP.lambda_decoupling:
+    value: 3e5
+#    values: [1e4, 1e5, 1e6]
+  args.VP.epochs:
+    value: 100
+  args.VP.EM_iters:
+    value: 30
+
+  args.VP.optimizer:
+    value: 'Adam'
+  #    value: 'SGD'
+  #    values: ['Adam', 'SGD']
+  args.VP.lr:
+    value: 1e-3
+#    values: [1e-4, 1e-3, 1e-2]
+
+
+  args.VP.early_stop_mode:
+    value: 'max'
+  args.VP.early_stop_on:
+    value: 'harmonic acc'
+  args.training.early_stop.patience:
+    value: 10
+  args.VP.early_stop_threshold:
+    value: 1e-3
+
+  args.VP.plateau_mode:
+    value: 'max'
+#    value: 'off'
+  args.VP.plateau_factor:
+    value: 0.1
+  args.VP.plateau_patience:
+    value: 6
+  args.VP.plateau_threshold:
+    value: 1e-3
+
+
+  args.training.workers:
+    value: 4
+
+  args.wandb.use:
+    value: True
+  args.wandb.is_sweep:
+    value: True
+
+  args.cfg.last_git_commit:
+    value: 1cf8af8b4f0e89f83921773e38c4b04b3399076e
