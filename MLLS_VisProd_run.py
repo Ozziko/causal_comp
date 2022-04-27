@@ -1,6 +1,6 @@
 # Imports
 from MLLS_VisProd_params import ProjectArgs
-import MLLS_utils
+import MLLS
 
 import numpy as np
 import pandas as pd
@@ -35,9 +35,9 @@ if __name__ == '__main__':
     args = ProjectArgs().argparse()
 
     # //////////// # Configuration //////////////////////////////////////////////////////////
-    args.cfg.run_name = MLLS_utils.naming_run(args)
-    MLLS_utils.renaming_paths_inplace(args)
-    MLLS_utils.creating_outputs_dir(args)
+    args.cfg.run_name = MLLS.naming_run(args)
+    MLLS.renaming_paths_inplace(args)
+    MLLS.creating_outputs_dir(args)
 
     args_dict = args.to_dict()
 
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     logger_name = args.cfg.project_name + ' training'
     logger = logging.getLogger(logger_name)
     logger.setLevel(args.cfg.log_level)
-    MLLS_utils.set_logger_level(args.cfg.log_level)
+    MLLS.set_logger_level(args.cfg.log_level)
     if args.cfg.log_to_file:
         logger.addHandler(logging.FileHandler(pjoin(args.cfg.output_dir, f'{args.cfg.project_name} log.txt')))
 
@@ -74,14 +74,14 @@ if __name__ == '__main__':
         logger.warning("Running on Windows with args.training.workers > 0 and args.training.pin_memory might lead to memory issues")
 
     # //////////// Torch setup, general seeding //////////////////////////////////////////////////////////
-    MLLS_utils.torch_setup(deterministic=args.training.deterministic)
-    MLLS_utils.seed_all(seed=args.cfg.seed)
+    MLLS.torch_setup(deterministic=args.training.deterministic)
+    MLLS.seed_all(seed=args.cfg.seed)
 
     # //////////// Data loading //////////////////////////////////////////////////////////
-    X, Y_comb, Y_shape, Y_color, label_dists_df, unseen_combs, seen_combs, unseen_combs_idx_to_comb_idx = MLLS_utils.load_data(args=args)
+    X, Y_comb, Y_shape, Y_color, label_dists_df, unseen_combs, seen_combs, unseen_combs_idx_to_comb_idx = MLLS.load_data(args=args)
 
     # //////////// Preparing training //////////////////////////////////////////////////////////
-    datasets, dataloaders, models, clss_loss, optimizers, schedulers = MLLS_utils.build_training(
+    datasets, dataloaders, models, clss_loss, optimizers, schedulers = MLLS.build_training(
         X=X, Y_comb=Y_comb, Y_shape=Y_shape, Y_color=Y_color, seen_combs=seen_combs, args=args)
     results = defaultdict(dict)
 
@@ -92,13 +92,13 @@ if __name__ == '__main__':
     for epoch in tqdm(range(args.VP.epochs + 1)):
         # training
         if epoch > 0:
-            results['train'][epoch], _ = MLLS_utils.run_epoch(training=True, models=models, dataloader=dataloaders['train'],
+            results['train'][epoch], _ = MLLS.run_epoch(training=True, models=models, dataloader=dataloaders['train'],
                                                    clss_loss=clss_loss, args=args, optimizers=optimizers,
                                                    seen_combs=seen_combs)
 
         # eval
         for phase in ['train', 'val']:
-            results[phase][epoch], _ = MLLS_utils.run_epoch(training=False, models=models, dataloader=dataloaders[phase],
+            results[phase][epoch], _ = MLLS.run_epoch(training=False, models=models, dataloader=dataloaders[phase],
                                                  clss_loss=clss_loss, args=args, seen_combs=seen_combs)
             if args.wandb.use:
                 results4wandb = results[phase][epoch]
@@ -154,10 +154,10 @@ if __name__ == '__main__':
 
     # /////// VisProd-EM ///////////////
     # results are saved by VisProd_EM inplace in label_dists_df:
-    MLLS_utils.VisProd_EM(datasets=datasets, models=models, clss_loss=clss_loss, Y_comb=Y_comb,
+    MLLS.VisProd_EM(datasets=datasets, models=models, clss_loss=clss_loss, Y_comb=Y_comb,
                           label_dists_df=label_dists_df, seen_combs=seen_combs, unseen_combs=unseen_combs,
                           unseen_combs_idx_to_comb_idx=unseen_combs_idx_to_comb_idx, args=args)
-    micro_result_summary_df = MLLS_utils.summarize(label_dists_df=label_dists_df, args=args)
+    micro_result_summary_df = MLLS.summarize(label_dists_df=label_dists_df, args=args)
 
     # //////////// Run summary //////////////////////////////////////////////////////////
     results['summary'] = {

@@ -1,4 +1,4 @@
-program: MLLS_VisProd.py
+program: MLLS_VisProd_run.py
 project: MLLS VisProd
 name: 2080 VisProd HSIC debug
 method: grid
@@ -18,19 +18,16 @@ parameters:
 #  args.data.dir:
 #    value: ""
 
-  args.training.epochs:
-    value: 100
   args.training.batch_size:
-    value: 256
-#    values: [256, 1024]
-
+#    value: 256
+    values: [256, 1024]
 
   args.VP.decoupling_loss:
     value: 'HSIC,G'
 #    values: ['HSIC,L', 'HSIC,G']
   args.VP.lambda_decoupling:
-    value: 3e5
-#    values: [1e4, 1e5, 1e6]
+#    value: 3e5
+    values: [1e4, 1e5, 1e6]
   args.VP.epochs:
     value: 100
   args.VP.EM_iters:
@@ -49,7 +46,7 @@ parameters:
     value: 'max'
   args.VP.early_stop_on:
     value: 'harmonic acc'
-  args.training.early_stop.patience:
+  args.training.early_stop_patience:
     value: 10
   args.VP.early_stop_threshold:
     value: 1e-3
@@ -74,4 +71,4 @@ parameters:
     value: True
 
   args.cfg.last_git_commit:
-    value: 1cf8af8b4f0e89f83921773e38c4b04b3399076e
+    value: 4d1bc78a2059ca55158ab87d5ab3bb7e66b206ea
