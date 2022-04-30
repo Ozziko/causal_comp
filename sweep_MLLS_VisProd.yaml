@@ -19,15 +19,15 @@ parameters:
 #    value: ""
 
   args.training.batch_size:
-#    value: 256
-    values: [256, 1024]
+    value: 256
+#    values: [256, 1024]
 
   args.VP.decoupling_loss:
     value: 'HSIC,G'
 #    values: ['HSIC,L', 'HSIC,G']
   args.VP.lambda_decoupling:
 #    value: 3e5
-    values: [1e4, 1e5, 1e6]
+    values: [1e3, 1e4, 1e5, 1e6, 1e7]
   args.VP.epochs:
     value: 100
   args.VP.EM_iters:
@@ -39,7 +39,7 @@ parameters:
   #    values: ['Adam', 'SGD']
   args.VP.lr:
 #    value: 1e-3
-    values: [1e-4, 1e-3, 1e-2]
+    values: [1e-4, 1e-3, 1e-2, 1e-1]
 
 
   args.VP.early_stop_mode:
@@ -63,7 +63,8 @@ parameters:
 
 
   args.training.workers:
-    value: 4
+    value: 0
+#    value: 4
 
   args.wandb.use:
     value: True
@@ -71,4 +72,4 @@ parameters:
     value: True
 
   args.cfg.last_git_commit:
-    value: 5a22b1bb7149f47436b7333969904b108df41b60
+    value: d3f9246d790fb28fe5f6094d51275806e7997b99
