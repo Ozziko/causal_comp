@@ -695,7 +695,7 @@ def VisProd_EM(datasets: dict, models: dict, clss_loss, Y_comb: dict, label_dist
     Y_color_probs, Y_shape_probs = {}, {}
 
     for phase in unshuffled_dataloaders:
-        _, log_probs = run_epoch(training=False, models=models, dataloader=unshuffled_dataloaders[phase],
+        _, log_probs, _ = run_epoch(training=False, models=models, dataloader=unshuffled_dataloaders[phase],
                                  clss_loss=clss_loss, args=args, seen_combs=seen_combs)
         Y_color_probs[phase] = torch.exp(log_probs['color']).cpu().numpy()
         Y_shape_probs[phase] = torch.exp(log_probs['shape']).cpu().numpy()
