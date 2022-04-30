@@ -518,8 +518,9 @@ def run_epoch(training: bool, models: dict, dataloader, clss_loss, args: Project
     epoch_losses = defaultdict(float)
     n_samples, n_seen = 0, 0  # n_unseen = n_samples- n_seen
     epoch_log_probs = defaultdict(list)
+    loss_was_finite = True
     with torch.set_grad_enabled(training):
-        for batch in dataloader:
+        for i_batch, batch in enumerate(dataloader):
             x, y_color, y_shape, y_comb, y_seen = batch
             batch_n_samples = x.shape[0]
             n_samples += batch_n_samples
@@ -610,17 +611,26 @@ def run_epoch(training: bool, models: dict, dataloader, clss_loss, args: Project
                 else:
                     loss += args.VP.lambda_decoupling * losses[args.VP.decoupling_loss]
             losses['total'] = loss
-            for space in losses:
-                epoch_losses[space] += losses[space].item()
 
             # backward
             if training:
                 if torch.isfinite(loss):
+                    for space in losses:
+                        if isinstance(losses[space], float): # to treat the case when conditional_indep_losses returns HSIC = 0.0
+                            epoch_losses[space] += losses[space]
+                        else:
+                            epoch_losses[space] += losses[space].item()
+
                     loss.backward()
                     for optimizer in optimizers.values():
                         optimizer.step()
                 else:
-                    raise RuntimeError(f"reached non-finite loss")
+                    loss_was_finite = False
+                    if training:
+                        logger.warning(f"batch {i_batch} reached non-finite loss in training -> breaking")
+                        break
+                    else:
+                        logger.warning(f"batch {i_batch} reached non-finite loss in eval (only skipping on adding batch to epoch loss")
 
         for space in epoch_log_probs:
             epoch_log_probs[space] = torch.cat(epoch_log_probs[space], dim=0)
@@ -636,7 +646,7 @@ def run_epoch(training: bool, models: dict, dataloader, clss_loss, args: Project
             results['unseen acc'] = np.nan
             results['harmonic acc'] = np.nan
         results.update({f'{space} loss per sample': loss / n_samples for space, loss in epoch_losses.items()})
-    return results, epoch_log_probs
+    return results, epoch_log_probs, loss_was_finite
 
 
 def basic_EM(Y, Y_probs, prior_source, EM_iterations: int = 100):
@@ -829,7 +839,7 @@ def summarize(label_dists_df, args: ProjectArgs):
         micro_result_summary_df.loc['unseen', col] /= micro_results_df.query("state == 'unseen'")[
             f'{phase} samples'].sum()
         micro_result_summary_df.loc['total acc', col] /= micro_results_df[f'{phase} samples'].sum()
-    micro_result_summary_df.columns = micro_result_summary_df.columns.str.replace("true pos", '')
+    micro_result_summary_df.columns = micro_result_summary_df.columns.str.replace(" true pos", '')
 
     acc_seen = micro_result_summary_df.loc['seen']
     acc_unseen = micro_result_summary_df.loc['unseen']

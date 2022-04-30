@@ -89,16 +89,17 @@ if __name__ == '__main__':
     time_before_train = time()
     results = {phase: {} for phase in ['train', 'val', 'test']}
     early_stopped = False
+    loss_was_finite = True
     for epoch in tqdm(range(args.VP.epochs + 1)):
         # training
         if epoch > 0:
-            results['train'][epoch], _ = MLLS.run_epoch(training=True, models=models, dataloader=dataloaders['train'],
+            results['train'][epoch], _, loss_was_finite = MLLS.run_epoch(training=True, models=models, dataloader=dataloaders['train'],
                                                    clss_loss=clss_loss, args=args, optimizers=optimizers,
                                                    seen_combs=seen_combs)
 
         # eval
         for phase in ['train', 'val']:
-            results[phase][epoch], _ = MLLS.run_epoch(training=False, models=models, dataloader=dataloaders[phase],
+            results[phase][epoch], _, _ = MLLS.run_epoch(training=False, models=models, dataloader=dataloaders[phase],
                                                  clss_loss=clss_loss, args=args, seen_combs=seen_combs)
             if args.wandb.use:
                 results4wandb = results[phase][epoch]
@@ -135,6 +136,8 @@ if __name__ == '__main__':
                             break
         if early_stopped:
             break
+        if not loss_was_finite:
+            break
 
         # schedulers
         if args.VP.plateau_mode != 'off':
@@ -164,6 +167,7 @@ if __name__ == '__main__':
         'train-val time (s)': train_val_time,
         'last epoch': epoch,
         'early_stopped': early_stopped,
+        'loss_was_finite': loss_was_finite,
     }
     if args.VP.early_stop_mode != 'off':
         results['summary']['best epoch'] = best_epoch

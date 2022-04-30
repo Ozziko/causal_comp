@@ -1,5 +1,5 @@
 program: MLLS_VisProd_run.py
-project: MLLS VisProd
+project: MLLS_VisProd
 name: 2080 VisProd HSIC basic
 method: grid
 parameters:
@@ -29,7 +29,7 @@ parameters:
 #    value: 3e5
     values: [1e4, 1e5, 1e6]
   args.VP.epochs:
-    value: 3
+    value: 100
   args.VP.EM_iters:
     value: 30
 
@@ -47,7 +47,7 @@ parameters:
   args.VP.early_stop_on:
     value: 'harmonic acc'
   args.VP.early_stop_patience:
-    value: 10
+    value: 15
   args.VP.early_stop_threshold:
     value: 1e-3
 
@@ -57,13 +57,13 @@ parameters:
   args.VP.plateau_factor:
     value: 0.1
   args.VP.plateau_patience:
-    value: 6
+    value: 10
   args.VP.plateau_threshold:
     value: 1e-3
 
 
   args.training.workers:
-    value: 0
+    value: 4
 
   args.wandb.use:
     value: True
@@ -71,4 +71,4 @@ parameters:
     value: True
 
   args.cfg.last_git_commit:
-    value: a1bf06db7a872d77cf68579ed334487b92f790cf
+    value: 5a22b1bb7149f47436b7333969904b108df41b60

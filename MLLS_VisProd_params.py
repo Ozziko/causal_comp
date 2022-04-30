@@ -104,7 +104,7 @@ class WandbArgs(SimpleArgsTemplate):
 @dataclass
 class Configuration(SimpleArgsTemplate):
     seed: int = -1  # For general seeding in steps of 1000: random,np,torch,cuda; = -1 -> cfg.seed = data.seed (in ProjectArgs.__post_init__)
-    project_name: str = 'MLLS VisProd'  # For logging etc
+    project_name: str = 'MLLS_VisProd'  # For logging etc
     project_path: str = ''  # Relative path from execution dir to project; default ('')
     output_dir: str = ''  # Default ('') = pjoin(project_path, 'outputs'); relative path from project_path to outputs dir, where each run outputs will be saved under a unique run_name dir
     run_name: str = 'unnamed run'  # Run name; output will be saved under a unique run_name dir, adding a suffix if necessary, e.g. 'dev', 'dev_2', 'dev_3'...
