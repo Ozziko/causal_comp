@@ -72,4 +72,4 @@ parameters:
     value: True
 
   args.cfg.last_git_commit:
-    value: d3f9246d790fb28fe5f6094d51275806e7997b99
+    value: 4a0d7be81d701076b1366461fe2704d96dc22cdc
