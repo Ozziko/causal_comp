@@ -860,8 +860,21 @@ def summarize(label_dists_df, args: ProjectArgs):
 # %% Yuval's definitions
 from typing import NamedTuple
 from pathlib import Path
-from ATTOP.data.dataset import sample_negative as ATTOP_sample_negative
 from torch.utils import data
+
+def sample_negative(self, attr, obj):
+    new_attr, new_obj = self.train_pairs[np.random.choice(len(self.train_pairs))]
+    if new_attr == attr and new_obj == obj:
+        return self.sample_negative(attr, obj)
+    return (self.attr2idx[new_attr], self.obj2idx[new_obj])
+
+@contextmanager
+def temporary_random_numpy_seed(seed) -> object:
+    state = np.random.get_state()
+    np.random.seed(seed)
+    yield None
+    np.random.set_state(state)
+
 
 
 def get_and_update_num_calls(func_ptr):

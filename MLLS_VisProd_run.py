@@ -83,6 +83,7 @@ if __name__ == '__main__':
     # //////////// Preparing training //////////////////////////////////////////////////////////
     datasets, dataloaders, models, clss_loss, optimizers, schedulers = MLLS.build_training(
         X=X, Y_comb=Y_comb, Y_shape=Y_shape, Y_color=Y_color, seen_combs=seen_combs, args=args)
+    
     results = defaultdict(dict)
 
     # /////// VisProd training & evaluation ///////////////
